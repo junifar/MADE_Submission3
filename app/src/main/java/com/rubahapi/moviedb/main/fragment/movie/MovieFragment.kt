@@ -4,6 +4,7 @@ package com.rubahapi.moviedb.main.fragment.movie
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
@@ -29,6 +30,29 @@ class MovieFragment : Fragment(), MovieView {
     lateinit var presenter: MoviePresenter
     lateinit var swipeRefresh: SwipeRefreshLayout
     lateinit var list:RecyclerView
+
+    lateinit var listState:Parcelable
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        listState = list.layoutManager?.onSaveInstanceState()!!
+        outState.putParcelable(FRAGMENT_VALUE, listState)
+//        outState.putInt(ADAPTER_POSITION, list.layoutManager?)
+        super.onSaveInstanceState(outState)
+    }
+
+
+
+//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+//        super.onViewStateRestored(savedInstanceState)
+//        if (savedInstanceState != null){
+//            list.layoutManager?.onRestoreInstanceState(savedInstanceState.getParcelable(FRAGMENT_VALUE))
+//        }
+//    }
+//
+    override fun onResume() {
+        super.onResume()
+//        list.layoutManager?.onRestoreInstanceState(listState)
+    }
 
     private fun initComponent(){
         progressBar = activity?.findViewById(R.id.progressBar) as ProgressBar
@@ -67,6 +91,13 @@ class MovieFragment : Fragment(), MovieView {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initComponent()
+
+        if(savedInstanceState!=null){
+            this.listState = savedInstanceState.getParcelable(FRAGMENT_VALUE)
+
+            list.layoutManager?.onRestoreInstanceState(listState)
+            list.scrollToPosition(savedInstanceState.getInt(ADAPTER_POSITION))
+        }
     }
 
     override fun onCreateView(
@@ -107,6 +138,8 @@ class MovieFragment : Fragment(), MovieView {
     }
 
     companion object{
+        private const val FRAGMENT_VALUE = "Fragment Value"
+        private const val ADAPTER_POSITION = "Adapter Position"
         @JvmStatic
         fun newInstance(): MovieFragment {
             return MovieFragment().apply {

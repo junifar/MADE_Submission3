@@ -8,7 +8,7 @@ import com.rubahapi.moviedb.model.Movie
 class MoviewFragmentViewModel: ViewModel(){
 
     private val items: MutableLiveData<List<Movie>> by lazy {
-        MutableLiveData().also{
+        MutableLiveData<List<Movie>>().also {
             loadMovie()
         }
     }
