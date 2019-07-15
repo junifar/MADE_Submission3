@@ -5,4 +5,10 @@
     <string name="image_logo">Logo</string>
     <string name="change_language_settings">Pilih Pengaturan Bahasa</string>
     <string name="movie_description">Deskripsi</string>
+    <string name="insert_city">Insert City</string>
+    <string name="id_jakarta_bandung_semarang">1642911,1650357,1627896</string>
+    <string name="search">Search</string>
+    <string name="name">Name</string>
+    <string name="temperature">Temperature</string>
+    <string name="description">Description</string>
 </resources>

@@ -31,28 +31,6 @@ class MovieFragment : Fragment(), MovieView {
     lateinit var swipeRefresh: SwipeRefreshLayout
     lateinit var list:RecyclerView
 
-    lateinit var listState:Parcelable
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        listState = list.layoutManager?.onSaveInstanceState()!!
-        outState.putParcelable(FRAGMENT_VALUE, listState)
-//        outState.putInt(ADAPTER_POSITION, list.layoutManager?)
-        super.onSaveInstanceState(outState)
-    }
-
-
-
-//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-//        super.onViewStateRestored(savedInstanceState)
-//        if (savedInstanceState != null){
-//            list.layoutManager?.onRestoreInstanceState(savedInstanceState.getParcelable(FRAGMENT_VALUE))
-//        }
-//    }
-//
-    override fun onResume() {
-        super.onResume()
-//        list.layoutManager?.onRestoreInstanceState(listState)
-    }
 
     private fun initComponent(){
         progressBar = activity?.findViewById(R.id.progressBar) as ProgressBar
@@ -90,13 +68,12 @@ class MovieFragment : Fragment(), MovieView {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        initComponent()
-
-        if(savedInstanceState!=null){
-            this.listState = savedInstanceState.getParcelable(FRAGMENT_VALUE)
-
-            list.layoutManager?.onRestoreInstanceState(listState)
-            list.scrollToPosition(savedInstanceState.getInt(ADAPTER_POSITION))
+        if(savedInstanceState == null){
+            initComponent()
+        }
+        if (savedInstanceState != null){
+            list = view?.findViewById(R.id.recycler_view_movie)!!
+            list.layoutManager?.scrollToPosition(4)
         }
     }
 
