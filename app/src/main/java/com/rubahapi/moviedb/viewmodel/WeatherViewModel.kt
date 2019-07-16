@@ -29,7 +29,7 @@ class WeatherViewModel:ViewModel(){
                 val responseObject = JSONObject(result)
                 val list = responseObject.getJSONArray("list")
 
-                for (i in 0..list.length()){
+                for (i in 0 until list.length()){
                     val weather = list.getJSONObject(i)
                     val weatherItems = Weather(weather)
                     listItems.add(weatherItems)

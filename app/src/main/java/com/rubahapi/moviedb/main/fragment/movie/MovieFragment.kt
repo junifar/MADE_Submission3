@@ -1,6 +1,10 @@
 package com.rubahapi.moviedb.main.fragment.movie
 
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModel
+import android.arch.lifecycle.ViewModelProvider
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -22,15 +26,25 @@ import com.rubahapi.moviedb.api.ApiRepository
 import com.rubahapi.moviedb.model.Movie
 import com.rubahapi.moviedb.util.invisible
 import com.rubahapi.moviedb.util.visible
+import com.rubahapi.moviedb.viewmodel.MovieViewModel
 
 class MovieFragment : Fragment(), MovieView {
     private var items: MutableList<Movie> = mutableListOf()
-    lateinit var adapter: MovieAdapter
-    lateinit var progressBar: ProgressBar
-    lateinit var presenter: MoviePresenter
-    lateinit var swipeRefresh: SwipeRefreshLayout
+    private lateinit var adapter: MovieAdapter
+    private lateinit var progressBar: ProgressBar
+//    private lateinit var presenter: MoviePresenter
+    private lateinit var swipeRefresh: SwipeRefreshLayout
     lateinit var list:RecyclerView
+    private lateinit var movieViewModel: MovieViewModel
 
+
+    private val getMovie:Observer<ArrayList<Movie>> = Observer {
+        movieItems ->
+        if(movieItems != null){
+            adapter.setData(movieItems)
+            hideLoading()
+        }
+    }
 
     private fun initComponent(){
         progressBar = activity?.findViewById(R.id.progressBar) as ProgressBar
@@ -38,43 +52,54 @@ class MovieFragment : Fragment(), MovieView {
 
         swipeRefresh.setColorSchemeColors(ContextCompat.getColor(context!!, android.R.color.holo_green_dark))
 
-        adapter = MovieAdapter(context!!, items){
-            val intent = Intent(activity, DetailMovieActivity::class.java)
-            intent.putExtra(
-                DetailMovieActivity.EXTRA_DETAIL_ACTIVITY_TYPE,
-                DetailMovieActivity.EXTRA_DETAIL_MOVIE
-            )
-            intent.putExtra(DetailMovieActivity.EXTRA_DETAIL_MOVIE, it)
-            startActivity(intent)
-        }
+        movieViewModel = ViewModelProviders.of(this).get(MovieViewModel::class.java)
+        movieViewModel.listMovies.observe(this, getMovie)
+
+        adapter = MovieAdapter(context!!)
+        adapter.notifyDataSetChanged()
+
+//        adapter = MovieAdapter(context!!, items){
+//            val intent = Intent(activity, DetailMovieActivity::class.java)
+//            intent.putExtra(
+//                DetailMovieActivity.EXTRA_DETAIL_ACTIVITY_TYPE,
+//                DetailMovieActivity.EXTRA_DETAIL_MOVIE
+//            )
+////            intent.putExtra(DetailMovieActivity.EXTRA_DETAIL_MOVIE, it)
+//            startActivity(intent)
+//        }
         list.adapter = adapter
 
-        val request = ApiRepository()
-        val gson = Gson()
-        presenter = MoviePresenter(this, request, gson)
-        onAttachView()
-        presenter.getMovie()
+//        val request = ApiRepository()
+//        val gson = Gson()
+//        presenter = MoviePresenter(this, request, gson)
+//        onAttachView()
+//        presenter.getMovie()
 
         swipeRefresh.setOnRefreshListener {
-            presenter.getMovie()
+//            presenter.getMovie()
+            movieViewModel.setListMovie()
+            showLoading()
             swipeRefresh.isRefreshing = false
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        onDetachView()
+//        onDetachView()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        if(savedInstanceState == null){
-            initComponent()
-        }
-        if (savedInstanceState != null){
-            list = view?.findViewById(R.id.recycler_view_movie)!!
-            list.layoutManager?.scrollToPosition(4)
-        }
+//        if(savedInstanceState == null){
+//            initComponent()
+//        }
+//        if (savedInstanceState != null){
+//            list = view?.findViewById(R.id.recycler_view_movie)!!
+//            list.layoutManager?.scrollToPosition(4)
+//        }
+
+        initComponent()
+
     }
 
     override fun onCreateView(
@@ -86,6 +111,8 @@ class MovieFragment : Fragment(), MovieView {
         list = view.findViewById(R.id.recycler_view_movie)
 
         list.layoutManager = LinearLayoutManager(context)
+
+//        initComponent()
 
         return view
 
@@ -100,11 +127,11 @@ class MovieFragment : Fragment(), MovieView {
     }
 
     override fun onAttachView() {
-        presenter.onAttach(this)
+//        presenter.onAttach(this)
     }
 
     override fun onDetachView() {
-        presenter.onDetach()
+//        presenter.onDetach()
     }
 
     override fun showMovie(data: List<Movie>) {

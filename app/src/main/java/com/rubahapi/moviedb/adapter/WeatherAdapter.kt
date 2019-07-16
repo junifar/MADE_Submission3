@@ -10,7 +10,7 @@ import com.rubahapi.moviedb.model.Weather
 
 class WeatherAdapter: RecyclerView.Adapter<WeatherAdapter.WeatherViewHolder>() {
 
-    val mData:ArrayList<Weather> = arrayListOf()
+    private val mData:ArrayList<Weather> = arrayListOf()
 
     fun setData(items: ArrayList<Weather>) {
         mData.clear()

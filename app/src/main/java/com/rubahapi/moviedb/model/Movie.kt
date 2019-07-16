@@ -2,35 +2,16 @@ package com.rubahapi.moviedb.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import org.json.JSONObject
 
 data class Movie (
     val title: String?,
     val overview: String?,
     val poster_path: String?
-) : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString()
+){
+    constructor(parcel: JSONObject) : this(
+        parcel.getString("title"),
+        parcel.getString("overview"),
+        parcel.getString("poster_path")
     )
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(title)
-        parcel.writeString(overview)
-        parcel.writeString(poster_path)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<Movie> {
-        override fun createFromParcel(parcel: Parcel): Movie {
-            return Movie(parcel)
-        }
-
-        override fun newArray(size: Int): Array<Movie?> {
-            return arrayOfNulls(size)
-        }
-    }
 }

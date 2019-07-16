@@ -12,28 +12,36 @@ import com.bumptech.glide.request.RequestOptions
 import com.rubahapi.moviedb.model.Movie
 import com.rubahapi.moviedb.R
 
-class MovieAdapter(private val context: Context, private val items: List<Movie>, private val listener: (Movie) -> Unit):
-    RecyclerView.Adapter<MovieAdapter.ViewHolder>(){
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(LayoutInflater.from(parent.context).inflate(
+class MovieAdapter(private val context: Context): RecyclerView.Adapter<MovieAdapter.MovieViewHolder>(){
+
+    private val mData:ArrayList<Movie> = arrayListOf()
+
+    fun setData(items: ArrayList<Movie>){
+        mData.clear()
+        mData.addAll(items)
+        notifyDataSetChanged()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MovieViewHolder(LayoutInflater.from(parent.context).inflate(
         R.layout.list_item_movie, parent, false))
 
-    override fun getItemCount() = items.size
+    override fun getItemCount() = mData.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bindItem(context, items[position], listener)
+    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) = holder.bindItem(mData[position], context)
 
 
-    class ViewHolder(view: View):RecyclerView.ViewHolder(view){
+    class MovieViewHolder(view: View):RecyclerView.ViewHolder(view){
         private val name = view.findViewById<TextView>(R.id.listview_item_title)
         private val description = view.findViewById<TextView>(R.id.listview_item_short_description)
         private val imagePath = view.findViewById<ImageView>(R.id.image_logo)
 
-        fun bindItem(context: Context, items: Movie, listener: (Movie) -> Unit){
-            name.text = items.title
-            description.text = items.overview
+        fun bindItem(movie: Movie, context: Context){
+            name.text = movie.title
+            description.text = movie.overview
 
-            Glide.with(context).load("https://image.tmdb.org/t/p/w370_and_h556_bestv2${items.poster_path}")
+            Glide.with(context).load("https://image.tmdb.org/t/p/w370_and_h556_bestv2${movie.poster_path}")
                 .into(imagePath)
-            itemView.setOnClickListener{listener(items)}
+//            itemView.setOnClickListener{listener(items)}
         }
     }
 
